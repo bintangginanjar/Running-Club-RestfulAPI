@@ -1,6 +1,7 @@
 package com.runclub.restful.api.entity;
 
 import java.util.Date;
+import java.util.Set;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,12 +21,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "roles")
 @Builder
 public class RoleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, length = 64, nullable = false)
     private String name;
@@ -38,5 +41,5 @@ public class RoleEntity {
     private Date updatedAt;
 
     @ManyToMany(mappedBy = "roles")
-    private UserEntity users;
+    private Set<UserEntity> users;
 }
