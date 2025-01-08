@@ -17,11 +17,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private CustomUserDetailService userDetailService;
     private JwtAuthEntryPoint authEntryPoint;
     
     public SecurityConfig(CustomUserDetailService userDetailService, JwtAuthEntryPoint authEntryPoint) {
-        this.userDetailService = userDetailService;
         this.authEntryPoint = authEntryPoint;
     }
 
@@ -67,5 +65,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JwtAuthFilter jwtAuthFilter() {
+        return new JwtAuthFilter();
     }
 }
