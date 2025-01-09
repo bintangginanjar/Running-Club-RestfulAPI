@@ -29,7 +29,11 @@ public class AuthController {
     public WebResponse<TokenResponse> login(@RequestBody LoginUserRequest request) {
         TokenResponse tokenResponse = authService.login(request);
         
-        return WebResponse.<TokenResponse>builder().data(tokenResponse).build();
+        return WebResponse.<TokenResponse>builder()
+                                        .status(true)
+                                        .messages("Login success")
+                                        .data(tokenResponse)
+                                        .build();
     }
 
 
