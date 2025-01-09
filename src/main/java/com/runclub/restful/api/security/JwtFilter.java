@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -24,11 +25,40 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailService userDetailService;
 
-    public JwtFilter(JwtUtil jwtUtil, CustomUserDetailService userDetailService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailService = userDetailService;
+    private String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(bearerToken) && (bearerToken.startsWith("Bearer "))) {
+            return bearerToken.substring(7, bearerToken.length());
+        }
+
+        return null;
     }
 
+    @SuppressWarnings("null")
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                    HttpServletResponse response, 
+                                    FilterChain filterChain) throws ServletException, IOException {
+        
+        String token = getJwtFromRequest(request);
+
+        if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
+            String username = jwtUtil.getUsernameFromJwt(token);
+
+            UserDetails userDetails = userDetailService.loadUserByUsername(username);
+
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);            
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    
+
+    /*
     @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request, 
@@ -56,5 +86,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }    
+    }
+    */
 }

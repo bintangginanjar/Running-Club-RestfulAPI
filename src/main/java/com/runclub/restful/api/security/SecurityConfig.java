@@ -16,12 +16,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private JwtFilter jwtFilter;
-    //private CustomUserDetailService userDetailService;
+    private JwtAuthEntryPoint jwtAuthEntryPoint;    
 
-    public SecurityConfig(JwtFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
-        //this.userDetailService = userDetailService;
+    public SecurityConfig(JwtAuthEntryPoint jwtAuthEntryPoint) {
+        this.jwtAuthEntryPoint = jwtAuthEntryPoint;        
     }
 
     @Bean
@@ -31,9 +29,10 @@ public class SecurityConfig {
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/users/**").permitAll()
                     .anyRequest()
-                    .authenticated())            
-            .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);            
+                    .authenticated())
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))                 
+            .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);            
 
         return http.build();
     }
@@ -57,20 +56,26 @@ public class SecurityConfig {
     }
      */
 
-    /*
+    
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-    */
-
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
+    public JwtFilter jwtFilter() {
+        return new JwtFilter();
+    }
+
+    /*
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
+    */
 }
