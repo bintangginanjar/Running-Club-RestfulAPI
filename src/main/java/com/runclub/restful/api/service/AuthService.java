@@ -11,42 +11,44 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.runclub.restful.api.model.LoginUserRequest;
 import com.runclub.restful.api.model.TokenResponse;
-import com.runclub.restful.api.security.JwtGenerator;
+import com.runclub.restful.api.security.JwtUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class AuthService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtGenerator jwtGenerator;
+    private JwtUtil jwtUtil;
 
     @Autowired
     ValidationService validationService;
 
     public AuthService(AuthenticationManager authenticationManager, 
                         ValidationService validationService,
-                        JwtGenerator jwtGenerator) {        
+                        JwtUtil jwtUtil) {        
         this.authenticationManager = authenticationManager;
         this.validationService = validationService;
-        this.jwtGenerator = jwtGenerator;
+        this.jwtUtil = jwtUtil;
     }
 
     public TokenResponse login(LoginUserRequest request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                                        new UsernamePasswordAuthenticationToken(
-                                            request.getUsername(), request.getPassword())
-                                        );
-
+            Authentication authentication =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                                    request.getUsername(), request.getPassword())
+                                );
+                                            
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String token = jwtGenerator.generateToken(authentication);
+            
+            String token = jwtUtil.generateToken(authentication);
 
             return TokenResponse.builder().token(token).build();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong username or password");
-        }
-        
+        }        
     }
 }

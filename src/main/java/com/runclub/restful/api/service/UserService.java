@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,7 +27,10 @@ public class UserService {
     RoleRepository roleRepository;
 
     @Autowired
-    private ValidationService validationService;
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ValidationService validationService;    
 
     public UserService(UserRepository userRepository, RoleRepository roleRepository,
             ValidationService validationService) {
@@ -48,7 +51,8 @@ public class UserService {
 
         UserEntity user = new UserEntity();
         user.setUsername(request.getUsername());
-        user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
+        //user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(Collections.singletonList(role));
 
         userRepository.save(user);

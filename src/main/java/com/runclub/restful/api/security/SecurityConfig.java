@@ -10,17 +10,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private JwtAuthEntryPoint authEntryPoint;
-    
-    public SecurityConfig(CustomUserDetailService userDetailService, JwtAuthEntryPoint authEntryPoint) {
-        this.authEntryPoint = authEntryPoint;
+    private JwtFilter jwtFilter;
+    //private CustomUserDetailService userDetailService;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+        //this.userDetailService = userDetailService;
     }
 
     @Bean
@@ -28,12 +29,11 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/users/**").permitAll()
                     .anyRequest()
-                    .authenticated())
-            .exceptionHandling(excHand -> excHand.accessDeniedPage("/error/403"))
-            .httpBasic(httpbc -> httpbc.authenticationEntryPoint(authEntryPoint))
+                    .authenticated())            
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .httpBasic(withDefaults());
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);            
 
         return http.build();
     }
@@ -57,10 +57,12 @@ public class SecurityConfig {
     }
      */
 
+    /*
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+    */
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -68,7 +70,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthFilter jwtAuthFilter() {
-        return new JwtAuthFilter();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }
