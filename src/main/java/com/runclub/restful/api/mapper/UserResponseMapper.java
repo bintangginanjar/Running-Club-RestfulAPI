@@ -7,7 +7,7 @@ public class UserResponseMapper {
 
     public static UserResponse ToUserResponseMapper(UserEntity user) {
         return UserResponse.builder()
-                .username(user.getUsername())                
+                .username(user.getUsername())              
                 .build();
     }
 

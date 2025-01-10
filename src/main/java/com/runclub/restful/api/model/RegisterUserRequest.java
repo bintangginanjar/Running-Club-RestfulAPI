@@ -20,5 +20,9 @@ public class RegisterUserRequest {
     @NotBlank
     @Size(max = 128)        
     private String password;
+
+    @NotBlank
+    @Size(max = 16)
+    private String role;
         
 }

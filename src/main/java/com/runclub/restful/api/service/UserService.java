@@ -47,7 +47,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already registered");
         }
 
-        RoleEntity role = roleRepository.findByName("USER").orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Roles not found"));
+        RoleEntity role = roleRepository.findByName(request.getRole()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Roles not found"));
 
         UserEntity user = new UserEntity();
         user.setUsername(request.getUsername());
