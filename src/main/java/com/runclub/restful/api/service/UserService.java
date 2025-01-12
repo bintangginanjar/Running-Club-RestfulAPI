@@ -4,6 +4,7 @@ import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,14 @@ public class UserService {
         user.setRoles(Collections.singletonList(role));
 
         userRepository.save(user);
+
+        return UserResponseMapper.ToUserResponseMapper(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse get(Authentication authentication) {
+
+        UserEntity user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         return UserResponseMapper.ToUserResponseMapper(user);
     }
