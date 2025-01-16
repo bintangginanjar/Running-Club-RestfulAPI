@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,17 +26,11 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailService userDetailService;
 
-    /*
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(bearerToken) && (bearerToken.startsWith("Bearer "))) {
-            return bearerToken.substring(7, bearerToken.length());
-        }
-
-        return null;
+    private HandlerExceptionResolver exceptionResolver;
+    
+    public JwtFilter(HandlerExceptionResolver exceptionResolver) {
+        this.exceptionResolver = exceptionResolver;
     }
-    */
 
     @SuppressWarnings("null")
     @Override
@@ -45,16 +40,21 @@ public class JwtFilter extends OncePerRequestFilter {
         
         String token = jwtUtil.getJwtFromRequest(request);
 
-        if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
-            String username = jwtUtil.getUsernameFromJwt(token);
-
-            UserDetails userDetails = userDetailService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);            
+        try {
+            if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
+                String username = jwtUtil.getUsernameFromJwt(token);
+    
+                UserDetails userDetails = userDetailService.loadUserByUsername(username);
+    
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);            
+            }
+    
+            filterChain.doFilter(request, response);
+        } catch (Exception ex) {                        
+            exceptionResolver.resolveException(request, response, null, ex);
         }
-
-        filterChain.doFilter(request, response);
+        
     }    
 }

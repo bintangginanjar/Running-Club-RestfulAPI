@@ -2,11 +2,11 @@ package com.runclub.restful.api.security;
 
 import java.security.Key;
 import java.util.Date;
+
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -52,7 +52,7 @@ public class JwtUtil {
 
                 return true;
         } catch (Exception e) {
-            throw new AuthenticationCredentialsNotFoundException("JWT was exprired or incorrect", e.fillInStackTrace());
+            throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect", e.fillInStackTrace());            
         }
     }
 
