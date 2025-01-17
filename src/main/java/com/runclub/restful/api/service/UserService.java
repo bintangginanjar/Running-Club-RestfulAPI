@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.runclub.restful.api.entity.RoleEntity;
 import com.runclub.restful.api.entity.UserEntity;
-import com.runclub.restful.api.mapper.UserResponseMapper;
+import com.runclub.restful.api.mapper.GeneralResponseMapper;
 import com.runclub.restful.api.model.RegisterUserRequest;
 import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
@@ -60,7 +60,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return UserResponseMapper.ToUserResponseMapper(user);
+        return GeneralResponseMapper.ToUserResponseMapper(user);
     }
 
     @Transactional(readOnly = true)
@@ -68,14 +68,15 @@ public class UserService {
 
         UserEntity user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        return UserResponseMapper.ToUserResponseMapper(user);
+        return GeneralResponseMapper.ToUserResponseMapper(user);
     }
 
     @Transactional
     public UserResponse update(Authentication authentication, UpdateUserRequest request) {
         validationService.validate(request);
 
-        UserEntity user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        UserEntity user = userRepository.findByUsername(authentication.getName())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
             
         if (Objects.nonNull(request.getPassword())) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -83,6 +84,6 @@ public class UserService {
 
         userRepository.save(user);
 
-        return UserResponseMapper.ToUserResponseMapper(user);
+        return GeneralResponseMapper.ToUserResponseMapper(user);
     }
 }

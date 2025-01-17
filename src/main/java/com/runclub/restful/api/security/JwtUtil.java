@@ -52,7 +52,7 @@ public class JwtUtil {
 
                 return true;
         } catch (Exception e) {
-            throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect", e.fillInStackTrace());            
+            throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect", e.fillInStackTrace());
         }
     }
 

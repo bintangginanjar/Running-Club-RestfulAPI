@@ -4,7 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.ProviderNotFoundException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,12 +56,57 @@ public class CustomExcHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(WebResponse.<String>builder()
                                             .status(false)
-                                            .errors(exception.getMessage())
+                                            .errors("Bad credentials")
                                             .build());
     }
 
     @ExceptionHandler
     public ResponseEntity<WebResponse<String>> accessDeniedException(AccessDeniedException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(WebResponse.<String>builder()
+                                            .status(false)
+                                            .errors(exception.getMessage())
+                                            .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<WebResponse<String>> authenticationException(AuthenticationException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(WebResponse.<String>builder()
+                                            .status(false)
+                                            .errors(exception.getMessage())
+                                            .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<WebResponse<String>> providerNotFoundException(ProviderNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(WebResponse.<String>builder()
+                                            .status(false)
+                                            .errors(exception.getMessage())
+                                            .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<WebResponse<String>> insufficientAuthExcepton(InsufficientAuthenticationException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(WebResponse.<String>builder()
+                                            .status(false)
+                                            .errors(exception.getMessage())
+                                            .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<WebResponse<String>> usernameNotFoundException(UsernameNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(WebResponse.<String>builder()
+                                            .status(false)
+                                            .errors(exception.getMessage())
+                                            .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<WebResponse<String>> authenticationServiceException(AuthenticationServiceException exception) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(WebResponse.<String>builder()
                                             .status(false)

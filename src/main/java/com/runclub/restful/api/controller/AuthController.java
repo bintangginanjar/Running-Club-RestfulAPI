@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AuthController {
 
     @Autowired
-    AuthService authService;
+    private AuthService authService;
 
     public AuthController(AuthService authService) {
         this.authService = authService;

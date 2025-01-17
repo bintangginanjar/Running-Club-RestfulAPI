@@ -20,7 +20,7 @@ import com.runclub.restful.api.service.UserService;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;

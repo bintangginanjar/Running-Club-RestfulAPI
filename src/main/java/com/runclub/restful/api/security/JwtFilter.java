@@ -3,6 +3,7 @@ package com.runclub.restful.api.security;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,9 +50,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);            
+
+                filterChain.doFilter(request, response);
+            } else {
+                throw new AccessDeniedException("JWT not present");
             }
-    
-            filterChain.doFilter(request, response);
+                
         } catch (Exception ex) {                        
             exceptionResolver.resolveException(request, response, null, ex);
         }
