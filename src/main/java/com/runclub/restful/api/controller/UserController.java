@@ -2,6 +2,7 @@ package com.runclub.restful.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,11 +37,12 @@ public class UserController {
                                         .data(response)
                                         .build();      
     }
-
+    
     @GetMapping(
         path = "/api/users/current",        
         produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public WebResponse<UserResponse> get(Authentication authentication) {
         UserResponse response = userService.get(authentication);
 

@@ -7,19 +7,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.runclub.restful.api.entity.RoleEntity;
+import com.runclub.restful.api.entity.UserEntity;
 import com.runclub.restful.api.model.RegisterUserRequest;
 import com.runclub.restful.api.model.UserResponse;
 import com.runclub.restful.api.model.WebResponse;
+import com.runclub.restful.api.repository.RoleRepository;
 import com.runclub.restful.api.repository.UserRepository;
+import com.runclub.restful.api.security.JwtUtil;
 
 @EnableWebMvc
 @SpringBootTest
@@ -30,6 +40,18 @@ public class UserControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -58,6 +80,99 @@ public class UserControllerTest {
             });
 
             assertEquals(true, response.getStatus());
+        });
+    }
+
+    @Test
+    void testCreateUserBlank() throws Exception {
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setUsername("test");
+        request.setPassword("");
+        request.setRole("USER");
+
+        mockMvc.perform(
+                post("/api/users")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))                        
+        ).andExpectAll(
+                status().isBadRequest()
+        ).andDo(result -> {
+                WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertEquals(false, response.getStatus());
+        });
+    }
+
+    @Test
+    void testGetUserSuccess() throws Exception {        
+        String username = "test";
+        String password = "password";
+        
+        RoleEntity role = roleRepository.findByName("USER").orElse(null);
+
+        UserEntity user = new UserEntity();
+        user.setUsername(username);        
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(Collections.singletonList(role));
+        userRepository.save(user);
+        
+        Authentication authentication =  authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                username, password)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken;
+
+        mockMvc.perform(
+                get("/api/users/current")
+                        .accept(MediaType.APPLICATION_JSON)                        
+                        .header("Authorization", mockBearerToken)                                             
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+                WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertEquals(true, response.getStatus());
+            assertEquals(username, response.getData().getUsername());            
+        });
+    }
+
+    @Test
+    void testGetUserInvalidToken() throws Exception {        
+        String username = "test";
+        String password = "password";
+        
+        RoleEntity role = roleRepository.findByName("USER").orElse(null);
+
+        UserEntity user = new UserEntity();
+        user.setUsername(username);        
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(Collections.singletonList(role));
+        userRepository.save(user);
+        
+        Authentication authentication =  authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                username, password)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken + "a";
+
+        mockMvc.perform(
+                get("/api/users/current")
+                        .accept(MediaType.APPLICATION_JSON)                        
+                        .header("Authorization", mockBearerToken)                                             
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+                WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertEquals(false, response.getStatus());            
         });
     }
 }
