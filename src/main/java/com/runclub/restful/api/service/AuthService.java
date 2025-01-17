@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,6 +15,8 @@ import com.runclub.restful.api.model.LoginUserRequest;
 import com.runclub.restful.api.model.TokenResponse;
 import com.runclub.restful.api.security.JwtUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -52,5 +55,26 @@ public class AuthService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong username or password");
         }        
+    }
+
+    @Transactional
+    public void logout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+        
+        if (authentication != null && authentication.isAuthenticated()) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+
+            /*
+            String token = request.getHeader("Authorization");
+
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            } else {
+                throw new BadCredentialsException("Invalid token");
+            }
+            */
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username not found");
+        }
+
     }
 }

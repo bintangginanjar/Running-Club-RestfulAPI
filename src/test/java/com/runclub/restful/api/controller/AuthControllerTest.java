@@ -10,6 +10,8 @@ import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.repository.RoleRepository;
 import com.runclub.restful.api.repository.UserRepository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -49,10 +51,7 @@ public class AuthControllerTest {
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
-    }
 
-    @Test
-    void testLoginSuccess() throws Exception {
         RoleEntity role = roleRepository.findByName("USER").orElse(null);
 
         UserEntity user = new UserEntity();
@@ -60,7 +59,10 @@ public class AuthControllerTest {
         user.setPassword(passwordEncoder.encode("password"));
         user.setRoles(Collections.singletonList(role));
         userRepository.save(user);
+    }
 
+    @Test
+    void testLoginSuccess() throws Exception {    
         LoginUserRequest request = new LoginUserRequest();
         request.setUsername("bintang");
         request.setPassword("password");
@@ -75,17 +77,29 @@ public class AuthControllerTest {
         ).andDo(result -> {
                 WebResponse<TokenResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
+            assertEquals(true, response.getStatus());            
+            assertNull(response.getErrors());            
+        });
+    }
 
-            assertNull(response.getErrors());
-            /*
-            assertNotNull(response.getData().getToken());
-            assertNotNull(response.getData().getExpiredAt());
+    @Test
+    void testLoginWrongUsernamePassword() throws Exception {    
+        LoginUserRequest request = new LoginUserRequest();
+        request.setUsername("bintang");
+        request.setPassword("password1");
 
-            UserEntity userDb = userRepository.findByUsername("bintang").orElse(null);
-            assertNotNull(userDb);
-            assertEquals(userDb.getToken(), response.getData().getToken());
-            assertEquals(userDb.getTokenExpiredAt(), response.getData().getExpiredAt());
-             */
+        mockMvc.perform(
+                post("/api/auth/login")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))                        
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+                WebResponse<TokenResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertEquals(false, response.getStatus());            
+            assertNotNull(response.getErrors());           
         });
     }
 }
