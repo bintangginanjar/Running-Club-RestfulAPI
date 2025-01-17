@@ -9,6 +9,7 @@ import com.runclub.restful.api.model.TokenResponse;
 import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.repository.RoleRepository;
 import com.runclub.restful.api.repository.UserRepository;
+import com.runclub.restful.api.security.JwtUtil;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -46,6 +50,12 @@ public class AuthControllerTest {
     PasswordEncoder passwordEncoder;
 
     @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -55,7 +65,7 @@ public class AuthControllerTest {
         RoleEntity role = roleRepository.findByName("USER").orElse(null);
 
         UserEntity user = new UserEntity();
-        user.setUsername("bintang");
+        user.setUsername("test");
         user.setPassword(passwordEncoder.encode("password"));
         user.setRoles(Collections.singletonList(role));
         userRepository.save(user);
@@ -100,6 +110,75 @@ public class AuthControllerTest {
             });
             assertEquals(false, response.getStatus());            
             assertNotNull(response.getErrors());           
+        });
+    }
+
+    @Test
+    void testLogoutSuccess() throws Exception {    
+        String username = "test";
+        String password = "password";
+
+        Authentication authentication =  authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                username, password)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken;
+    
+        mockMvc.perform(
+                delete("/api/auth/logout")
+                        .accept(MediaType.APPLICATION_JSON)                        
+                        .header("Authorization", mockBearerToken)                                                 
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+                WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertEquals(true, response.getStatus());            
+            assertNull(response.getErrors());            
+        });
+    }
+
+    @Test
+    void testLogoutNoToken() throws Exception {    
+        mockMvc.perform(
+                delete("/api/auth/logout")
+                        .accept(MediaType.APPLICATION_JSON)                                                                                            
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+                WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertEquals(false, response.getStatus());            
+            assertNotNull(response.getErrors());            
+        });
+    }
+
+    @Test
+    void testLogoutInvalidToken() throws Exception {   
+        String username = "test";
+        String password = "password";
+
+        Authentication authentication =  authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                username, password)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken + "a";
+
+        mockMvc.perform(
+                delete("/api/auth/logout")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", mockBearerToken)                                                                                            
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+                WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertEquals(false, response.getStatus());            
+            assertNotNull(response.getErrors());            
         });
     }
 }
