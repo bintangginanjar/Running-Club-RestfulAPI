@@ -1,6 +1,7 @@
 package com.runclub.restful.api.service;
 
 import java.util.Collections;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import com.runclub.restful.api.entity.RoleEntity;
 import com.runclub.restful.api.entity.UserEntity;
 import com.runclub.restful.api.mapper.UserResponseMapper;
 import com.runclub.restful.api.model.RegisterUserRequest;
+import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
 import com.runclub.restful.api.repository.RoleRepository;
 import com.runclub.restful.api.repository.UserRepository;
@@ -69,4 +71,18 @@ public class UserService {
         return UserResponseMapper.ToUserResponseMapper(user);
     }
 
+    @Transactional
+    public UserResponse update(Authentication authentication, UpdateUserRequest request) {
+        validationService.validate(request);
+
+        UserEntity user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            
+        if (Objects.nonNull(request.getPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        userRepository.save(user);
+
+        return UserResponseMapper.ToUserResponseMapper(user);
+    }
 }

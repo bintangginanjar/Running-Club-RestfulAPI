@@ -5,11 +5,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.runclub.restful.api.model.RegisterUserRequest;
+import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
 import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.service.UserService;
@@ -38,11 +40,11 @@ public class UserController {
                                         .build();      
     }
     
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(
         path = "/api/users/current",        
         produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    )    
     public WebResponse<UserResponse> get(Authentication authentication) {
         UserResponse response = userService.get(authentication);
 
@@ -53,4 +55,19 @@ public class UserController {
                                             .build();
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PatchMapping(
+        path = "/api/users/current",
+        consumes = MediaType.APPLICATION_JSON_VALUE,  
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<UserResponse> update(Authentication authentication, @RequestBody UpdateUserRequest request) {
+        UserResponse response = userService.update(authentication, request);
+
+        return WebResponse.<UserResponse>builder()
+                                            .status(true)
+                                            .messages("User update success")
+                                            .data(response)
+                                            .build();
+    }
 }
