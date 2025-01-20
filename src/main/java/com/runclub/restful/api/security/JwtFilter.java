@@ -49,16 +49,15 @@ public class JwtFilter extends OncePerRequestFilter {
     
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);            
-
-                filterChain.doFilter(request, response);
-            } else {
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);                
+            }/* else {
                 throw new AccessDeniedException("JWT not present");
-            }
-                
+            }*/
+               
         } catch (Exception ex) {                        
             exceptionResolver.resolveException(request, response, null, ex);
         }
-        
+
+        filterChain.doFilter(request, response);        
     }    
 }

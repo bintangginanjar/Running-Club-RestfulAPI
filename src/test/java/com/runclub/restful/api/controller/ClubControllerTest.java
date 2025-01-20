@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,9 @@ public class ClubControllerTest {
     private final String username = "test";
     private final String password = "password";
 
+    private final String adminUsername = "testadmin";
+    private final String adminPassword = "password";
+
     private final String clubTitle = "Test Club";
     private final String clubContent = "Test Club Content";
     private final String clubPhotoUrl = "https://media.istockphoto.com/id/1142900322/photo/happy-female-runner-jogging-in-the-morning-in-nature.jpg?b=1&s=612x612&w=0&k=20&c=6yDa1kkxNOObyu7O6LJprQSgB454ME3IjOgmdZzciHg=";
@@ -75,13 +79,20 @@ public class ClubControllerTest {
         clubRepository.deleteAll();
         userRepository.deleteAll();
 
-        RoleEntity role = roleRepository.findByName("USER").orElse(null);
+        RoleEntity adminRole = roleRepository.findByName("ADMIN").orElse(null);
+        RoleEntity userRole = roleRepository.findByName("USER").orElse(null);
+
+        UserEntity admin = new UserEntity();
+        admin.setUsername(adminUsername);
+        admin.setPassword(passwordEncoder.encode(adminPassword));
+        admin.setRoles(Collections.singletonList(adminRole));
+        userRepository.save(admin);        
 
         UserEntity user = new UserEntity();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(Collections.singletonList(role));
-        userRepository.save(user);
+        user.setRoles(Collections.singletonList(userRole));
+        userRepository.save(user);        
                 
         ClubEntity club = new ClubEntity();
         club.setTitle(clubTitle);
@@ -430,6 +441,58 @@ public class ClubControllerTest {
             });
 
             assertEquals(false, response.getStatus());            
+        });
+    }
+
+    @Test
+    void testGetAllClubSuccess() throws Exception {                 
+        Authentication authentication =  authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                adminUsername, adminPassword)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken;
+    
+        mockMvc.perform(
+                get("/api/clubs")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)                        
+                        .header("Authorization", mockBearerToken)                       
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+                WebResponse<List<ClubResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertEquals(true, response.getStatus());
+            assertNull(response.getErrors());
+        });
+    }
+
+    @Test
+    void testGetAllClubBadRole() throws Exception {                 
+        Authentication authentication =  authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                username, password)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken;
+    
+        mockMvc.perform(
+                get("/api/clubs")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)                        
+                        .header("Authorization", mockBearerToken)                       
+        ).andExpectAll(
+                status().isForbidden()
+        ).andDo(result -> {
+                WebResponse<List<ClubResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertEquals(false, response.getStatus());
+            assertNotNull(response.getErrors());
         });
     }
 }

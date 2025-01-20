@@ -56,7 +56,7 @@ public class CustomExcHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(WebResponse.<String>builder()
                                             .status(false)
-                                            .errors("Bad credentials")
+                                            .errors(exception.getMessage())
                                             .build());
     }
 
@@ -71,7 +71,7 @@ public class CustomExcHandler {
 
     @ExceptionHandler
     public ResponseEntity<WebResponse<String>> authenticationException(AuthenticationException exception) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(WebResponse.<String>builder()
                                             .status(false)
                                             .errors(exception.getMessage())

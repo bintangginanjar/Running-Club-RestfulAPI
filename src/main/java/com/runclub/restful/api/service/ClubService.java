@@ -1,5 +1,6 @@
 package com.runclub.restful.api.service;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,5 +126,12 @@ public class ClubService {
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Club not found"));
 
         clubRepository.delete(club);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ClubResponse> getAll() {        
+        List<ClubEntity> clubs = clubRepository.findAll();
+
+        return ResponseMapper.ToClubResponseListMapper(clubs);
     }
 }

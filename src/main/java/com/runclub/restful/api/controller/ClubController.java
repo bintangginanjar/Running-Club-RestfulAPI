@@ -1,5 +1,7 @@
 package com.runclub.restful.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,6 +58,21 @@ public class ClubController {
         ClubResponse response = clubService.get(authentication, clubId);
 
         return WebResponse.<ClubResponse>builder()
+                                        .status(true)
+                                        .messages("Club fetching success")
+                                        .data(response)
+                                        .build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(
+        path = "/api/clubs",        
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<ClubResponse>> getAll(Authentication authentication) {
+        List<ClubResponse> response = clubService.getAll();
+
+        return WebResponse.<List<ClubResponse>>builder()
                                         .status(true)
                                         .messages("Club fetching success")
                                         .data(response)
