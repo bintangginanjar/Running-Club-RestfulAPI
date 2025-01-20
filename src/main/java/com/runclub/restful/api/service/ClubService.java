@@ -1,5 +1,7 @@
 package com.runclub.restful.api.service;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -9,9 +11,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.runclub.restful.api.entity.ClubEntity;
 import com.runclub.restful.api.entity.UserEntity;
-import com.runclub.restful.api.mapper.GeneralResponseMapper;
+import com.runclub.restful.api.mapper.ResponseMapper;
 import com.runclub.restful.api.model.ClubResponse;
 import com.runclub.restful.api.model.RegisterClubRequest;
+import com.runclub.restful.api.model.UpdateClubRequest;
 import com.runclub.restful.api.repository.ClubRepository;
 import com.runclub.restful.api.repository.UserRepository;
 
@@ -50,8 +53,77 @@ public class ClubService {
         club.setCreatedBy(user);
         clubRepository.save(club);
 
-        return GeneralResponseMapper.ToClubResponseMapper(club);
+        return ResponseMapper.ToClubResponseMapper(club);
     }
-    
 
+    @Transactional(readOnly = true)
+    public ClubResponse get(Authentication authentication, String strClubId) {
+        Integer clubId = 0;
+
+        try {
+            clubId = Integer.parseInt(strClubId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request");
+        }
+
+        UserEntity user = userRepository.findByUsername(authentication.getName())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        ClubEntity club = clubRepository.findFirstByCreatedByAndId(user, clubId)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Club not found"));
+
+        return ResponseMapper.ToClubResponseMapper(club);
+    }
+
+    @Transactional
+    public ClubResponse update(Authentication authentication, String strClubId, UpdateClubRequest request) {
+        Integer clubId = 0;
+
+        try {
+            clubId = Integer.parseInt(strClubId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request");
+        }
+
+        UserEntity user = userRepository.findByUsername(authentication.getName())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        ClubEntity club = clubRepository.findFirstByCreatedByAndId(user, clubId)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Club not found"));
+
+        if (Objects.nonNull(request.getTitle())) {
+            club.setTitle(request.getTitle());
+        }
+
+        if (Objects.nonNull(request.getContent())) {
+            club.setContent(request.getContent());
+        }
+
+        if (Objects.nonNull(request.getPhotoUrl())) {
+            club.setPhotoUrl(request.getPhotoUrl());
+        }
+
+        clubRepository.save(club);
+
+        return ResponseMapper.ToClubResponseMapper(club);
+    }
+
+    @Transactional
+    public void deletes(Authentication authentication, String strClubId) {
+        Integer clubId = 0;
+
+        try {
+            clubId = Integer.parseInt(strClubId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request");
+        }
+
+        UserEntity user = userRepository.findByUsername(authentication.getName())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        ClubEntity club = clubRepository.findFirstByCreatedByAndId(user, clubId)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Club not found"));
+
+        clubRepository.delete(club);
+    }
 }

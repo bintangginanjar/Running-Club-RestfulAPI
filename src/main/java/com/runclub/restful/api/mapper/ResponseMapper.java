@@ -5,7 +5,7 @@ import com.runclub.restful.api.entity.UserEntity;
 import com.runclub.restful.api.model.ClubResponse;
 import com.runclub.restful.api.model.UserResponse;
 
-public class GeneralResponseMapper {
+public class ResponseMapper {
 
     public static UserResponse ToUserResponseMapper(UserEntity user) {
         return UserResponse.builder()

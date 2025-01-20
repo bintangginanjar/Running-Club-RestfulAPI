@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.runclub.restful.api.entity.RoleEntity;
 import com.runclub.restful.api.entity.UserEntity;
-import com.runclub.restful.api.mapper.GeneralResponseMapper;
+import com.runclub.restful.api.mapper.ResponseMapper;
 import com.runclub.restful.api.model.RegisterUserRequest;
 import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
@@ -60,7 +60,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GeneralResponseMapper.ToUserResponseMapper(user);
+        return ResponseMapper.ToUserResponseMapper(user);
     }
 
     @Transactional(readOnly = true)
@@ -68,7 +68,7 @@ public class UserService {
 
         UserEntity user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        return GeneralResponseMapper.ToUserResponseMapper(user);
+        return ResponseMapper.ToUserResponseMapper(user);
     }
 
     @Transactional
@@ -84,6 +84,6 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GeneralResponseMapper.ToUserResponseMapper(user);
+        return ResponseMapper.ToUserResponseMapper(user);
     }
 }

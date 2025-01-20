@@ -4,12 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.runclub.restful.api.model.ClubResponse;
 import com.runclub.restful.api.model.RegisterClubRequest;
+import com.runclub.restful.api.model.UpdateClubRequest;
 import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.service.ClubService;
 
@@ -38,6 +43,58 @@ public class ClubController {
                                         .status(true)
                                         .messages("Club registration success")
                                         .data(response)
+                                        .build();
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping(
+        path = "/api/clubs/{clubId}",        
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<ClubResponse> get(Authentication authentication, 
+                                            @PathVariable("clubId") String clubId) {
+        ClubResponse response = clubService.get(authentication, clubId);
+
+        return WebResponse.<ClubResponse>builder()
+                                        .status(true)
+                                        .messages("Club fetching success")
+                                        .data(response)
+                                        .build();
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PatchMapping(
+        path = "/api/clubs/{clubId}",
+        consumes = MediaType.APPLICATION_JSON_VALUE,      
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<ClubResponse> update(Authentication authentication, 
+                                            @PathVariable("clubId") String clubId,
+                                            @RequestBody UpdateClubRequest request) {
+        ClubResponse response = clubService.update(authentication, clubId, request);
+
+        request.setId(clubId);
+
+        return WebResponse.<ClubResponse>builder()
+                                        .status(true)
+                                        .messages("Club fetching success")
+                                        .data(response)
+                                        .build();
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @DeleteMapping(
+        path = "/api/clubs/{clubId}",        
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<String> delete(Authentication authentication, 
+                                            @PathVariable("clubId") String clubId) {
+    
+        clubService.deletes(authentication, clubId);
+
+        return WebResponse.<String>builder()
+                                        .status(true)
+                                        .messages("Club delete success")                                        
                                         .build();
     }
 }
