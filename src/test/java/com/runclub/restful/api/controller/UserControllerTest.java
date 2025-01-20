@@ -57,6 +57,9 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private final String username = "test";
+    private final String password = "rahasia";
+
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
@@ -65,8 +68,8 @@ public class UserControllerTest {
     @Test
     void testCreateUserSuccess() throws Exception {
         RegisterUserRequest request = new RegisterUserRequest();
-        request.setUsername("test");
-        request.setPassword("rahasia");
+        request.setUsername(username);
+        request.setPassword(password);
         request.setRole("USER");
 
         mockMvc.perform(
@@ -87,7 +90,7 @@ public class UserControllerTest {
     @Test
     void testCreateUserBlank() throws Exception {
         RegisterUserRequest request = new RegisterUserRequest();
-        request.setUsername("test");
+        request.setUsername(username);
         request.setPassword("");
         request.setRole("USER");
 
@@ -107,10 +110,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testGetUserSuccess() throws Exception {        
-        String username = "test";
-        String password = "password";
-        
+    void testGetUserSuccess() throws Exception {                        
         RoleEntity role = roleRepository.findByName("USER").orElse(null);
 
         UserEntity user = new UserEntity();
@@ -119,7 +119,7 @@ public class UserControllerTest {
         user.setRoles(Collections.singletonList(role));
         userRepository.save(user);
         
-        Authentication authentication =  authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                                             new UsernamePasswordAuthenticationToken(
                                                 username, password)
                                             );

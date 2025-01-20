@@ -40,7 +40,7 @@ public class UserController {
                                         .build();      
     }
     
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @GetMapping(
         path = "/api/users/current",        
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -55,7 +55,7 @@ public class UserController {
                                             .build();
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @PatchMapping(
         path = "/api/users/current",
         consumes = MediaType.APPLICATION_JSON_VALUE,  

@@ -495,4 +495,30 @@ public class ClubControllerTest {
             assertNotNull(response.getErrors());
         });
     }
+
+    @Test
+    void testGetAllClubInvalidToken() throws Exception {                 
+        Authentication authentication = authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                adminUsername, adminPassword)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken + "a";
+    
+        mockMvc.perform(
+                get("/api/clubs")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)                        
+                        .header("Authorization", mockBearerToken)                       
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+                WebResponse<List<ClubResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertEquals(false, response.getStatus());
+            assertNotNull(response.getErrors());
+        });
+    }
 }
