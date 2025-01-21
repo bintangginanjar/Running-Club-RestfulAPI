@@ -134,4 +134,15 @@ public class ClubService {
 
         return ResponseMapper.ToClubResponseListMapper(clubs);
     }
+
+    @Transactional(readOnly = true)
+    public List<ClubResponse> list(Authentication authentication) {
+    
+        UserEntity user = userRepository.findByUsername(authentication.getName())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        List<ClubEntity> clubs = clubRepository.findAllByCreatedBy(user);
+
+        return ResponseMapper.ToClubResponseListMapper(clubs);
+    }
 }

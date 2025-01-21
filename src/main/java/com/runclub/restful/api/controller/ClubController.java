@@ -80,6 +80,21 @@ public class ClubController {
     }
 
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @GetMapping(
+        path = "/api/clubs/list",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<ClubResponse>> list(Authentication authentication) {
+        List<ClubResponse> response = clubService.list(authentication);
+
+        return WebResponse.<List<ClubResponse>>builder()
+                                        .status(true)
+                                        .messages("Club fetching success")
+                                        .data(response)
+                                        .build();
+    }
+
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @PatchMapping(
         path = "/api/clubs/{clubId}",
         consumes = MediaType.APPLICATION_JSON_VALUE,      
