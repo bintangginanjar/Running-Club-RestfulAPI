@@ -161,10 +161,10 @@ public class UserControllerTest {
                                             );
 
         String mockToken = jwtUtil.generateToken(authentication);
-        String mockBearerToken = "Bearer " + mockToken;
+        String mockBearerToken = "Bearer " + mockToken + "a";
 
         mockMvc.perform(
-                patch("/api/users/current")
+                get("/api/users/current")
                         .accept(MediaType.APPLICATION_JSON)                      
                         .header("Authorization", mockBearerToken)                                             
         ).andExpectAll(
@@ -218,10 +218,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testUpdateUserInvalidToken() throws Exception {        
-        String username = "test";
-        String password = "password";
-        
+    void testUpdateUserInvalidToken() throws Exception {                
         RoleEntity role = roleRepository.findByName("USER").orElse(null);
 
         UserEntity user = new UserEntity();

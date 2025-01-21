@@ -105,9 +105,9 @@ public class ClubControllerTest {
     @Test
     void testCreateClubSuccess() throws Exception {        
         RegisterClubRequest request = new RegisterClubRequest();
-        request.setTitle("Test Club");
-        request.setContent("Test Content");
-        request.setPhotoUrl("Test PhotoUrl");
+        request.setTitle("Daytona");
+        request.setContent("Daytona Content");
+        request.setPhotoUrl("Daytona PhotoUrl");
         
         Authentication authentication =  authenticationManager.authenticate(
                                             new UsernamePasswordAuthenticationToken(
@@ -137,11 +137,43 @@ public class ClubControllerTest {
     }
 
     @Test
+    void testCreateClubInvalidToken() throws Exception {        
+        RegisterClubRequest request = new RegisterClubRequest();
+        request.setTitle("Nevada Club");
+        request.setContent("Nevada Content");
+        request.setPhotoUrl("Nevada PhotoUrl");
+        
+        Authentication authentication =  authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                username, password)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken + "a";
+
+        mockMvc.perform(
+                post("/api/clubs")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .header("Authorization", mockBearerToken)                                             
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+                WebResponse<ClubResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertEquals(false, response.getStatus());
+            assertNotNull(response.getErrors());
+        });
+    }
+
+    @Test
     void testCreateClubNoToken() throws Exception {        
         RegisterClubRequest request = new RegisterClubRequest();
-        request.setTitle("Test Club");
-        request.setContent("Test Content");
-        request.setPhotoUrl("Test PhotoUrl");         
+        request.setTitle("Nevada Club");
+        request.setContent("Nevada Content");
+        request.setPhotoUrl("Nevada PhotoUrl");         
 
         mockMvc.perform(
                 post("/api/clubs")

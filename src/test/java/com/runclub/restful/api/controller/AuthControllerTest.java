@@ -58,6 +58,9 @@ public class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private final String username = "test";
+    private final String password = "password";
+
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
@@ -65,8 +68,8 @@ public class AuthControllerTest {
         RoleEntity role = roleRepository.findByName("USER").orElse(null);
 
         UserEntity user = new UserEntity();
-        user.setUsername("test");
-        user.setPassword(passwordEncoder.encode("password"));
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Collections.singletonList(role));
         userRepository.save(user);
     }
@@ -74,8 +77,8 @@ public class AuthControllerTest {
     @Test
     void testLoginSuccess() throws Exception {    
         LoginUserRequest request = new LoginUserRequest();
-        request.setUsername("bintang");
-        request.setPassword("password");
+        request.setUsername(username);
+        request.setPassword(password);
 
         mockMvc.perform(
                 post("/api/auth/login")
@@ -95,7 +98,7 @@ public class AuthControllerTest {
     @Test
     void testLoginWrongUsernamePassword() throws Exception {    
         LoginUserRequest request = new LoginUserRequest();
-        request.setUsername("bintang");
+        request.setUsername(username);
         request.setPassword("password1");
 
         mockMvc.perform(
@@ -115,9 +118,6 @@ public class AuthControllerTest {
 
     @Test
     void testLogoutSuccess() throws Exception {    
-        String username = "test";
-        String password = "password";
-
         Authentication authentication =  authenticationManager.authenticate(
                                             new UsernamePasswordAuthenticationToken(
                                                 username, password)
@@ -146,7 +146,7 @@ public class AuthControllerTest {
                 delete("/api/auth/logout")
                         .accept(MediaType.APPLICATION_JSON)                                                                                            
         ).andExpectAll(
-                status().isUnauthorized()
+                status().isForbidden()
         ).andDo(result -> {
                 WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
@@ -157,9 +157,6 @@ public class AuthControllerTest {
 
     @Test
     void testLogoutInvalidToken() throws Exception {   
-        String username = "test";
-        String password = "password";
-
         Authentication authentication =  authenticationManager.authenticate(
                                             new UsernamePasswordAuthenticationToken(
                                                 username, password)

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.runclub.restful.api.model.LoginUserRequest;
 import com.runclub.restful.api.model.TokenResponse;
-import com.runclub.restful.api.model.UserResponse;
 import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.service.AuthService;
 
@@ -43,15 +42,15 @@ public class AuthController {
                                         .build();
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @DeleteMapping(
         path = "/api/auth/logout",        
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<UserResponse> logout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+    public WebResponse<String> logout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
         authService.logout(authentication, request, response);
         
-        return WebResponse.<UserResponse>builder()
+        return WebResponse.<String>builder()
                                             .status(true)
                                             .messages("User logout successfully")                                            
                                             .build();
