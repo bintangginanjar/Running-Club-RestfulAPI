@@ -105,7 +105,7 @@ public class ClubController {
                                             @RequestBody UpdateClubRequest request) {
         ClubResponse response = clubService.update(authentication, clubId, request);
 
-        request.setId(clubId);
+        request.setClubId(clubId);
 
         return WebResponse.<ClubResponse>builder()
                                         .status(true)

@@ -14,6 +14,8 @@ public interface ClubRepository extends JpaRepository<ClubEntity, Integer> {
 
     Optional<ClubEntity> findFirstByCreatedByAndId(UserEntity user, Integer id);
 
+    Optional<ClubEntity> findFirstByCreatedByAndTitle(UserEntity user, String title);
+
     List<ClubEntity> findAllByCreatedBy(UserEntity user);
 
 }

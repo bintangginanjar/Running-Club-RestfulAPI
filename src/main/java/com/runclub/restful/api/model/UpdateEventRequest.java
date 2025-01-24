@@ -12,16 +12,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateClubRequest {
+public class UpdateEventRequest {
 
     @JsonIgnore
     @NotBlank
     private String clubId;
-        
-    private String title;
 
+    @JsonIgnore
+    @NotBlank
+    private String eventId;
+
+    private String name;
+    
+    private String startTime;
+    
+    private String endTime;
+    
+    private String type;
+    
     private String photoUrl;
-
-    private String content;
 
 }

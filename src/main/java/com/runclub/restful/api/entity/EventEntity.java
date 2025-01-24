@@ -48,4 +48,7 @@ public class EventEntity {
     @JoinColumn(name = "club_id", nullable = false)
     private ClubEntity club;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private UserEntity createdBy;
 }

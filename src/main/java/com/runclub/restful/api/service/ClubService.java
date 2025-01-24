@@ -31,8 +31,11 @@ public class ClubService {
     @Autowired
     private ValidationService validationService;
 
-    public ClubService(ClubRepository clubRepository, ValidationService validationService) {
+    public ClubService(ClubRepository clubRepository, 
+                        UserRepository userRepository, 
+                        ValidationService validationService) {
         this.clubRepository = clubRepository;
+        this.userRepository = userRepository;
         this.validationService = validationService;
     }
 
