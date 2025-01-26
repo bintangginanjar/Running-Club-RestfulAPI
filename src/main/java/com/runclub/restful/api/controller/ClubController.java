@@ -30,7 +30,8 @@ public class ClubController {
         this.clubService = clubService;
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PostMapping(
         path = "/api/clubs",
         consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -48,7 +49,8 @@ public class ClubController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping(
         path = "/api/clubs/{clubId}",        
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -64,7 +66,8 @@ public class ClubController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(
         path = "/api/clubs",        
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -79,7 +82,8 @@ public class ClubController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping(
         path = "/api/clubs/list",
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -94,7 +98,8 @@ public class ClubController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping(
         path = "/api/clubs/{clubId}",
         consumes = MediaType.APPLICATION_JSON_VALUE,      
@@ -114,7 +119,8 @@ public class ClubController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping(
         path = "/api/clubs/{clubId}",        
         produces = MediaType.APPLICATION_JSON_VALUE

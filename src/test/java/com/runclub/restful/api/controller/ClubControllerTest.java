@@ -79,8 +79,8 @@ public class ClubControllerTest {
         clubRepository.deleteAll();
         userRepository.deleteAll();
 
-        RoleEntity adminRole = roleRepository.findByName("ADMIN").orElse(null);
-        RoleEntity userRole = roleRepository.findByName("USER").orElse(null);
+        RoleEntity adminRole = roleRepository.findByName("ROLE_ADMIN").orElse(null);
+        RoleEntity userRole = roleRepository.findByName("ROLE_USER").orElse(null);
 
         UserEntity admin = new UserEntity();
         admin.setUsername(adminUsername);
@@ -101,7 +101,7 @@ public class ClubControllerTest {
         club.setCreatedBy(user);
         clubRepository.save(club);
     }
-
+    
     @Test
     void testCreateClubSuccess() throws Exception {        
         RegisterClubRequest request = new RegisterClubRequest();
