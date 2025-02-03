@@ -28,6 +28,7 @@ import com.runclub.restful.api.model.RegisterUserRequest;
 import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
 import com.runclub.restful.api.model.WebResponse;
+import com.runclub.restful.api.repository.ClubRepository;
 import com.runclub.restful.api.repository.RoleRepository;
 import com.runclub.restful.api.repository.UserRepository;
 import com.runclub.restful.api.security.JwtUtil;
@@ -46,6 +47,9 @@ public class UserControllerTest {
     private RoleRepository roleRepository;
 
     @Autowired
+    private ClubRepository clubRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -62,6 +66,7 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+        clubRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -70,7 +75,7 @@ public class UserControllerTest {
         RegisterUserRequest request = new RegisterUserRequest();
         request.setUsername(username);
         request.setPassword(password);
-        request.setRole("USER");
+        request.setRole("ROLE_USER");
 
         mockMvc.perform(
                 post("/api/users")
@@ -111,7 +116,7 @@ public class UserControllerTest {
 
     @Test
     void testGetUserSuccess() throws Exception {                        
-        RoleEntity role = roleRepository.findByName("USER").orElse(null);
+        RoleEntity role = roleRepository.findByName("_ROLE_USER").orElse(null);
 
         UserEntity user = new UserEntity();
         user.setUsername(username);        
