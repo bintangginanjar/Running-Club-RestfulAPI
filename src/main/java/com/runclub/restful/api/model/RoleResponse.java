@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponse {
-
-    private String username;
+public class RoleResponse {
 
     private String role;
-        
+
 }

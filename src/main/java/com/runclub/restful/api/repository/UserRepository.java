@@ -10,6 +10,6 @@ import com.runclub.restful.api.entity.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
-    Optional<UserEntity> findByUsername(String username);    
+    Optional<UserEntity> findByUsername(String username);
 
 }

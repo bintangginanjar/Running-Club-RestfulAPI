@@ -27,6 +27,7 @@ import com.runclub.restful.api.entity.UserEntity;
 import com.runclub.restful.api.model.RegisterUserRequest;
 import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
+import com.runclub.restful.api.model.UserRolesResponse;
 import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.repository.ClubRepository;
 import com.runclub.restful.api.repository.RoleRepository;
@@ -116,7 +117,7 @@ public class UserControllerTest {
 
     @Test
     void testGetUserSuccess() throws Exception {                        
-        RoleEntity role = roleRepository.findByName("_ROLE_USER").orElse(null);
+        RoleEntity role = roleRepository.findByName("ROLE_USER").orElse(null);
 
         UserEntity user = new UserEntity();
         user.setUsername(username);        
@@ -139,7 +140,7 @@ public class UserControllerTest {
         ).andExpectAll(
                 status().isOk()
         ).andDo(result -> {
-                WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+                WebResponse<UserRolesResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
             assertEquals(true, response.getStatus());

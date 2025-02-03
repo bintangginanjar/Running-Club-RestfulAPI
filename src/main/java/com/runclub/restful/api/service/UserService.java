@@ -1,6 +1,7 @@
 package com.runclub.restful.api.service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,10 @@ import com.runclub.restful.api.entity.RoleEntity;
 import com.runclub.restful.api.entity.UserEntity;
 import com.runclub.restful.api.mapper.ResponseMapper;
 import com.runclub.restful.api.model.RegisterUserRequest;
+import com.runclub.restful.api.model.RoleResponse;
 import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
+import com.runclub.restful.api.model.UserRolesResponse;
 import com.runclub.restful.api.repository.RoleRepository;
 import com.runclub.restful.api.repository.UserRepository;
 
@@ -53,26 +56,27 @@ public class UserService {
         RoleEntity role = roleRepository.findByName(request.getRole()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Roles not found"));
 
         UserEntity user = new UserEntity();
-        user.setUsername(request.getUsername());
-        //user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
+        user.setUsername(request.getUsername());        
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(Collections.singletonList(role));
+        user.setRoles(Collections.singletonList(role));        
 
         userRepository.save(user);
 
-        return ResponseMapper.ToUserResponseMapper(user);
+        return ResponseMapper.ToUserResponseMapper(user, role);
     }
 
     @Transactional(readOnly = true)
-    public UserResponse get(Authentication authentication) {
+    public UserRolesResponse get(Authentication authentication) {
 
         UserEntity user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        
+        List<RoleResponse> roles = ResponseMapper.ToRoleResponseList(user.getRoles());
 
-        return ResponseMapper.ToUserResponseMapper(user);
+        return ResponseMapper.ToUserRolesResponseMapper(user, roles);
     }
 
     @Transactional
-    public UserResponse update(Authentication authentication, UpdateUserRequest request) {
+    public UserRolesResponse update(Authentication authentication, UpdateUserRequest request) {
         validationService.validate(request);
 
         UserEntity user = userRepository.findByUsername(authentication.getName())
@@ -84,6 +88,8 @@ public class UserService {
 
         userRepository.save(user);
 
-        return ResponseMapper.ToUserResponseMapper(user);
+        List<RoleResponse> roles = ResponseMapper.ToRoleResponseList(user.getRoles());
+
+        return ResponseMapper.ToUserRolesResponseMapper(user, roles);
     }
 }

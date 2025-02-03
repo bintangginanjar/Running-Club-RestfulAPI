@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.runclub.restful.api.model.RegisterUserRequest;
 import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
+import com.runclub.restful.api.model.UserRolesResponse;
 import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.service.UserService;
 
@@ -40,16 +41,16 @@ public class UserController {
                                         .build();      
     }
     
-    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping(
         path = "/api/users/current",        
         produces = MediaType.APPLICATION_JSON_VALUE
     )    
-    public WebResponse<UserResponse> get(Authentication authentication) {
-        UserResponse response = userService.get(authentication);
+    public WebResponse<UserRolesResponse> get(Authentication authentication) {
+        UserRolesResponse response = userService.get(authentication);
 
-        return WebResponse.<UserResponse>builder()
+        return WebResponse.<UserRolesResponse>builder()
                                             .status(true)
                                             .messages("User fetching success")
                                             .data(response)
@@ -59,13 +60,13 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @PatchMapping(
         path = "/api/users/current",
-        consumes = MediaType.APPLICATION_JSON_VALUE,  
+        consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<UserResponse> update(Authentication authentication, @RequestBody UpdateUserRequest request) {
-        UserResponse response = userService.update(authentication, request);
+    public WebResponse<UserRolesResponse> update(Authentication authentication, @RequestBody UpdateUserRequest request) {
+        UserRolesResponse response = userService.update(authentication, request);
 
-        return WebResponse.<UserResponse>builder()
+        return WebResponse.<UserRolesResponse>builder()
                                             .status(true)
                                             .messages("User update success")
                                             .data(response)
