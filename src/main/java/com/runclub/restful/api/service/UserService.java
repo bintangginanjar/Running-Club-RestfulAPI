@@ -134,9 +134,12 @@ public class UserService {
             //UserDetails userDetails = userDetailService.loadUserByUsername(user.getUsername());
             
             //List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-            List<RoleResponse> roles = ResponseMapper.ToRoleResponseList(user.getRoles());
+            UserEntity updatedUser = userRepository.findByUsername(request.getUsername())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+            List<RoleResponse> roles = ResponseMapper.ToRoleResponseList(updatedUser.getRoles());
             
-            return ResponseMapper.ToUserResponseMapper(user, roles);
+            return ResponseMapper.ToUserResponseMapper(updatedUser, roles);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Update role failed"); 
         }                                    
