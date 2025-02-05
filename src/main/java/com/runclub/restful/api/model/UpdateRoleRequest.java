@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RoleModifyRequest {
+public class UpdateRoleRequest {
 
-    @Size(max = 128)
+    @NotBlank
+    @Size(max = 128)        
     private String username;
 
     @NotBlank

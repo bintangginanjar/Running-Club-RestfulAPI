@@ -71,6 +71,7 @@ public class AuthControllerTest {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Collections.singletonList(role));
+        //user.addRole(role);
         userRepository.save(user);
     }
 

@@ -11,21 +11,13 @@ import com.runclub.restful.api.model.ClubResponse;
 import com.runclub.restful.api.model.EventResponse;
 import com.runclub.restful.api.model.RoleResponse;
 import com.runclub.restful.api.model.UserResponse;
-import com.runclub.restful.api.model.UserRolesResponse;
 
 public class ResponseMapper {
 
-    public static UserResponse ToUserResponseMapper(UserEntity user, RoleEntity role) {        
+    public static UserResponse ToUserResponseMapper(UserEntity user, List<String> role) {        
         return UserResponse.builder()                
                 .username(user.getUsername())
-                .role(role.getName())
-                .build();
-    }
-
-    public static UserRolesResponse ToUserRolesResponseMapper(UserEntity user, List<RoleResponse> roles) {
-        return UserRolesResponse.builder()
-                .username(user.getUsername())
-                .roles(roles)
+                .role(role)
                 .build();
     }
 

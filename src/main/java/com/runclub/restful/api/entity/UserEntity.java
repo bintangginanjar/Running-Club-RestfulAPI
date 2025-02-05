@@ -47,11 +47,19 @@ public class UserEntity {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
         name = "users_roles",
         joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
+    
     private List<RoleEntity> roles;
+
+    /*
+    public void addRole(RoleEntity role) {
+        this.roles.add(role);
+    }
+    */
+    
 }

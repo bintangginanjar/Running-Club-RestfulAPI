@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.runclub.restful.api.model.RegisterUserRequest;
+import com.runclub.restful.api.model.UpdateRoleRequest;
 import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
-import com.runclub.restful.api.model.UserRolesResponse;
 import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.service.UserService;
 
@@ -47,28 +47,45 @@ public class UserController {
         path = "/api/users/current",        
         produces = MediaType.APPLICATION_JSON_VALUE
     )    
-    public WebResponse<UserRolesResponse> get(Authentication authentication) {
-        UserRolesResponse response = userService.get(authentication);
+    public WebResponse<UserResponse> get(Authentication authentication) {
+        UserResponse response = userService.get(authentication);
 
-        return WebResponse.<UserRolesResponse>builder()
+        return WebResponse.<UserResponse>builder()
                                             .status(true)
                                             .messages("User fetching success")
                                             .data(response)
                                             .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping(
         path = "/api/users/current",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<UserRolesResponse> update(Authentication authentication, @RequestBody UpdateUserRequest request) {
-        UserRolesResponse response = userService.update(authentication, request);
+    public WebResponse<UserResponse> update(Authentication authentication, @RequestBody UpdateUserRequest request) {
+        UserResponse response = userService.update(authentication, request);
 
-        return WebResponse.<UserRolesResponse>builder()
+        return WebResponse.<UserResponse>builder()
                                             .status(true)
                                             .messages("User update success")
+                                            .data(response)
+                                            .build();
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping(
+        path = "/api/users/role",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<UserResponse> updateRole(Authentication authentication, @RequestBody UpdateRoleRequest request) {
+        UserResponse response = userService.updateRole(authentication, request);
+
+        return WebResponse.<UserResponse>builder()
+                                            .status(true)
+                                            .messages("User role update success")
                                             .data(response)
                                             .build();
     }

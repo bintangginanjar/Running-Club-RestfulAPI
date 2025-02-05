@@ -25,9 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.runclub.restful.api.entity.RoleEntity;
 import com.runclub.restful.api.entity.UserEntity;
 import com.runclub.restful.api.model.RegisterUserRequest;
+import com.runclub.restful.api.model.UpdateRoleRequest;
 import com.runclub.restful.api.model.UpdateUserRequest;
 import com.runclub.restful.api.model.UserResponse;
-import com.runclub.restful.api.model.UserRolesResponse;
 import com.runclub.restful.api.model.WebResponse;
 import com.runclub.restful.api.repository.ClubRepository;
 import com.runclub.restful.api.repository.RoleRepository;
@@ -67,8 +67,19 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+        //roleRepository.deleteAll();
         clubRepository.deleteAll();
         userRepository.deleteAll();
+
+        /*
+        RoleEntity adminRole = new RoleEntity();
+        adminRole.setName("ROLE_ADMIN");
+        roleRepository.save(adminRole);
+
+        RoleEntity userRole = new RoleEntity();
+        userRole.setName("ROLE_USER");
+        roleRepository.save(userRole);
+        */
     }
 
     @Test
@@ -123,6 +134,7 @@ public class UserControllerTest {
         user.setUsername(username);        
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Collections.singletonList(role));
+        //user.addRole(role);
         userRepository.save(user);
         
         Authentication authentication = authenticationManager.authenticate(
@@ -140,7 +152,7 @@ public class UserControllerTest {
         ).andExpectAll(
                 status().isOk()
         ).andDo(result -> {
-                WebResponse<UserRolesResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+                WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
             assertEquals(true, response.getStatus());
@@ -153,12 +165,13 @@ public class UserControllerTest {
         String username = "test";
         String password = "password";
         
-        RoleEntity role = roleRepository.findByName("USER").orElse(null);
+        RoleEntity role = roleRepository.findByName("ROLE_USER").orElse(null);
 
         UserEntity user = new UserEntity();
         user.setUsername(username);        
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Collections.singletonList(role));
+        //user.addRole(role);
         userRepository.save(user);
         
         Authentication authentication =  authenticationManager.authenticate(
@@ -188,15 +201,16 @@ public class UserControllerTest {
         String username = "test";
         String password = "password";
         
-        RoleEntity role = roleRepository.findByName("USER").orElse(null);
+        RoleEntity role = roleRepository.findByName("ROLE_USER").orElse(null);
 
         UserEntity user = new UserEntity();
         user.setUsername(username);        
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Collections.singletonList(role));
+        //user.addRole(role);
         userRepository.save(user);
         
-        Authentication authentication =  authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                                             new UsernamePasswordAuthenticationToken(
                                                 username, password)
                                             );
@@ -225,12 +239,13 @@ public class UserControllerTest {
 
     @Test
     void testUpdateUserInvalidToken() throws Exception {                
-        RoleEntity role = roleRepository.findByName("USER").orElse(null);
+        RoleEntity role = roleRepository.findByName("ROLE_USER").orElse(null);
 
         UserEntity user = new UserEntity();
         user.setUsername(username);        
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Collections.singletonList(role));
+        //user.addRole(role);
         userRepository.save(user);
         
         Authentication authentication =  authenticationManager.authenticate(
@@ -257,6 +272,57 @@ public class UserControllerTest {
             });
 
             assertEquals(false, response.getStatus());                 
+        });
+    }
+
+    @Test
+    void testUpdateUserRoleSuccess() throws Exception {      
+        String adminUsername = "admin";
+        String adminPassword = "password";
+                    
+        RoleEntity adminRole = roleRepository.findByName("ROLE_ADMIN").orElse(null);        
+
+        UserEntity admin = new UserEntity();
+        admin.setUsername(adminUsername);
+        admin.setPassword(passwordEncoder.encode(adminPassword));
+        admin.setRoles(Collections.singletonList(adminRole));
+        //admin.addRole(adminRole);
+        userRepository.save(admin);        
+
+        RoleEntity userRole = roleRepository.findByName("ROLE_USER").orElse(null);
+
+        UserEntity user = new UserEntity();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(Collections.singletonList(userRole));
+        //user.addRole(userRole);
+        userRepository.save(user);  
+
+        Authentication authentication = authenticationManager.authenticate(
+                                            new UsernamePasswordAuthenticationToken(
+                                                adminUsername, adminPassword)
+                                            );
+
+        String mockToken = jwtUtil.generateToken(authentication);
+        String mockBearerToken = "Bearer " + mockToken;
+
+        UpdateRoleRequest request = new UpdateRoleRequest();
+        request.setUsername(username);
+        request.setRole("ROLE_ADMIN");
+
+        mockMvc.perform(
+                patch("/api/users/role")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))                    
+                        .header("Authorization", mockBearerToken)                                             
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+                WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertEquals(true, response.getStatus());                     
         });
     }
 }

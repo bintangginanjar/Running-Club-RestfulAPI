@@ -86,12 +86,14 @@ public class ClubControllerTest {
         admin.setUsername(adminUsername);
         admin.setPassword(passwordEncoder.encode(adminPassword));
         admin.setRoles(Collections.singletonList(adminRole));
+        //admin.addRole(adminRole);
         userRepository.save(admin);        
 
         UserEntity user = new UserEntity();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Collections.singletonList(userRole));
+        //user.addRole(userRole);
         userRepository.save(user);        
                 
         ClubEntity club = new ClubEntity();
