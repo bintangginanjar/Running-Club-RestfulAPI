@@ -14,11 +14,24 @@ import com.runclub.restful.api.model.UserResponse;
 
 public class ResponseMapper {
 
-    public static UserResponse ToUserResponseMapper(UserEntity user, List<String> role) {        
+    public static UserResponse ToUserResponseMapper(UserEntity user, List<RoleResponse> role) {        
         return UserResponse.builder()                
                 .username(user.getUsername())
                 .role(role)
                 .build();
+    }
+
+    public static List<UserResponse> ToUserResponseListMapper(List<UserEntity> users) {        
+        return users.stream()
+                    .map(
+                        p -> new UserResponse(
+                            p.getUsername(),
+                            p.getRoles().stream()
+                                        .map(
+                                            e -> new RoleResponse(
+                                                e.getName()
+                                            )).collect(Collectors.toList())
+                        )).collect(Collectors.toList());
     }
 
     public static List<RoleResponse> ToRoleResponseList(List<RoleEntity> roles) {

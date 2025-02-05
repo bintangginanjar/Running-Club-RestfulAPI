@@ -322,7 +322,7 @@ public class UserControllerTest {
                 WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertEquals(true, response.getStatus());                     
+            assertEquals(true, response.getStatus());            
         });
     }
 }

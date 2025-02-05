@@ -1,5 +1,7 @@
 package com.runclub.restful.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -86,6 +88,21 @@ public class UserController {
         return WebResponse.<UserResponse>builder()
                                             .status(true)
                                             .messages("User role update success")
+                                            .data(response)
+                                            .build();
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(
+        path = "/api/users/list",        
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )    
+    public WebResponse<List<UserResponse>> list(Authentication authentication) {
+        List<UserResponse> response = userService.list(authentication);
+
+        return WebResponse.<List<UserResponse>>builder()
+                                            .status(true)
+                                            .messages("User fetching success")
                                             .data(response)
                                             .build();
     }

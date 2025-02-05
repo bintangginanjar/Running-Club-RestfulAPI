@@ -15,6 +15,6 @@ public class UserResponse {
 
     private String username;
 
-    private List<String> role;
+    private List<RoleResponse> role;
         
 }
