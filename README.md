@@ -42,7 +42,7 @@ Endpoint : GET /api/users/current
 
 Request Header :
 
-* Authorization : "Bearer " + "Token" (mandatory)
+* Authorization : "Bearer " + Token (mandatory)
 
 Allowed User : 
 * ROLE_ADMIN
@@ -70,7 +70,7 @@ Endpoint : PATCH /api/users/current
 
 Request Header :
 
-* Authorization : "Bearer " + "Token" (mandatory)
+* Authorization : "Bearer " + Token (mandatory)
 
 Allowed User : 
 * ROLE_ADMIN
@@ -106,7 +106,7 @@ Endpoint : PATCH /api/users/role
 
 Request Header :
 
-* Authorization : "Bearer " + "Token" (mandatory)
+* Authorization : "Bearer " + Token (mandatory)
 
 Allowed User : 
 * ROLE_ADMIN
@@ -141,7 +141,7 @@ Endpoint : GET /api/users/list
 
 Request Header :
 
-* Authorization : "Bearer " + "Token" (mandatory)
+* Authorization : "Bearer " + Token (mandatory)
 
 Allowed User : 
 * ROLE_ADMIN
@@ -219,7 +219,7 @@ Endpoint : DELETE /api/auth/logout
 
 Request Header :
 
-* Authorization : "Bearer " + "Token" (mandatory)
+* Authorization : "Bearer " + Token (mandatory)
 
 Allowed User : 
 * ROLE_ADMIN
