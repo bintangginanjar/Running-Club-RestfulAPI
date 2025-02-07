@@ -30,7 +30,8 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PostMapping(
         path = "/api/clubs/{clubId}/events",
         consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -51,7 +52,8 @@ public class EventController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping(
         path = "/api/clubs/{clubId}/events/{eventId}",      
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -69,7 +71,8 @@ public class EventController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping(
         path = "/api/clubs/{clubId}/events/{eventId}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -89,10 +92,10 @@ public class EventController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping(
-        path = "/api/clubs/{clubId}/events/{eventId}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
+        path = "/api/clubs/{clubId}/events/{eventId}",        
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<String> delete(Authentication authentication, 
@@ -107,7 +110,8 @@ public class EventController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(
         path = "/api/events",      
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -123,7 +127,8 @@ public class EventController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping(
         path = "/api/events/list",      
         produces = MediaType.APPLICATION_JSON_VALUE

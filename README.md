@@ -457,3 +457,218 @@ Response Body:
     ]
 }
 ```
+
+## 4. Event Management
+
+### a. Register Event
+Endpoint : POST /api/clubs/{clubId}/events
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body:
+```json
+{
+    "clubId" : "7",
+    "name" : "Boston Running Club Event",
+    "startTime" : "10-02-2025",
+    "endTime" : "10-02-2025",
+    "type" : "Fun Run",
+    "photoUrl" : "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+}
+```
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Event registration success",
+    "errors": null,
+    "data": {
+        "id": 1,
+        "name": "Boston Running Club Event",
+        "startTime": "10-02-2025",
+        "endTime": "10-02-2025",
+        "type": "Fun Run",
+        "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+    }
+}
+```
+
+### b. Get Event by Id
+Endpoint : GET /api/clubs/{clubId}
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body: None
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Event fetching success",
+    "errors": null,
+    "data": {
+        "id": 2,
+        "name": "Nevada Running Club Event",
+        "startTime": "11-02-2025",
+        "endTime": "11-02-2025",
+        "type": "Fun Run",
+        "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+    }
+}
+```
+
+### c. Update Club
+Endpoint : PATCH /api/clubs/{clubId}/events/{eventId}
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body:
+```json
+{
+    "clubId" : "8",
+    "eventId" : "2",
+    "name" : "Nevada Running Club Event",
+    "startTime" : "14-02-2025",
+    "endTime" : "14-02-2025",
+    "type" : "Fun Run on Desert",
+    "photoUrl" : "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+}
+```
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Event update success",
+    "errors": null,
+    "data": {
+        "id": 2,
+        "name": "Nevada Running Club Event",
+        "startTime": "14-02-2025",
+        "endTime": "14-02-2025",
+        "type": "Fun Run on Desert",
+        "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+    }
+}
+```
+
+### d. Delete Club
+Endpoint : DELETE /api/clubs/{clubId}/events/{eventId}
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body: None
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Event delete success",
+    "errors": null,
+    "data": null
+}
+```
+
+### e. Get Event by User
+Endpoint : GET /api/events/list
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body: None
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Event fetching success",
+    "errors": null,
+    "data": [
+        {
+            "id": 1,
+            "name": "Boston Running Club Event",
+            "startTime": "10-02-2025",
+            "endTime": "10-02-2025",
+            "type": "Fun Run",
+            "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+        },
+        {
+            "id": 3,
+            "name": "Nevada Running Club Event on Summer",
+            "startTime": "11-08-2025",
+            "endTime": "11-08-2025",
+            "type": "Fun Run Summer",
+            "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+        }
+    ]
+}
+```
+
+### f. Get All Events
+Endpoint : GET /api/events
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+
+Request Body: None
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Event fetching success",
+    "errors": null,
+    "data": [
+        {
+            "id": 1,
+            "name": "Boston Running Club Event",
+            "startTime": "10-02-2025",
+            "endTime": "10-02-2025",
+            "type": "Fun Run",
+            "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+        },
+        {
+            "id": 3,
+            "name": "Nevada Running Club Event on Summer",
+            "startTime": "11-08-2025",
+            "endTime": "11-08-2025",
+            "type": "Fun Run Summer",
+            "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+        }
+    ]
+}
+```
