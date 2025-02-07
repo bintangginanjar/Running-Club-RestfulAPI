@@ -109,7 +109,7 @@ public class ClubControllerTest {
         RegisterClubRequest request = new RegisterClubRequest();
         request.setTitle("Daytona");
         request.setContent("Daytona Content");
-        request.setPhotoUrl("Daytona PhotoUrl");
+        request.setPhotoUrl("https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg");
         
         Authentication authentication =  authenticationManager.authenticate(
                                             new UsernamePasswordAuthenticationToken(

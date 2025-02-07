@@ -234,3 +234,226 @@ Response Body:
     "data": null
 }
 ```
+
+## 3. Club Management
+
+### a. Register Club
+Endpoint : POST /api/clubs
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body:
+```json
+{
+    "title" : "Daytona Running Club",
+    "content" : "Daytona Content",
+    "photoUrl" : "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+}
+```
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Club registration success",
+    "errors": null,
+    "data": {
+        "id": 4,
+        "title": "Daytona Running Club",
+        "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg",
+        "content": "Daytona Content"
+    }
+}
+```
+
+### b. Get Club by Id
+Endpoint : GET /api/clubs/{clubId}
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body: None
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Club fetching success",
+    "errors": null,
+    "data": {
+        "id": 4,
+        "title": "Daytona Running Club",
+        "photoUrl": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg",
+        "content": "Daytona Content"
+    }
+}
+```
+
+### c. Update Club
+Endpoint : PATCH /api/clubs/{clubId}
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body:
+```json
+{
+    "title" : "Daytona Running Club",
+    "content" : "Daytona Content",
+    "photoUrl" : "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+}
+```
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Club update success",
+    "errors": null,
+    "data": {
+        "id": 4,
+        "title": "Daytona Running Club",
+        "photoUrl": "https://img.freepik.com/free-photo/young-happy-sportswoman-running-road-morning-copy-space_637285-3758.jpg",
+        "content": "Daytona Content"
+    }
+}
+```
+
+### c. Update Club
+Endpoint : PATCH /api/clubs/{clubId}
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body:
+```json
+{
+    "title" : "Daytona Running Club",
+    "content" : "Daytona Content",
+    "photoUrl" : "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+}
+```
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Club update success",
+    "errors": null,
+    "data": {
+        "id": 4,
+        "title": "Daytona Running Club",
+        "photoUrl": "https://img.freepik.com/free-photo/young-happy-sportswoman-running-road-morning-copy-space_637285-3758.jpg",
+        "content": "Daytona Content"
+    }
+}
+```
+
+### d. Delete Club
+Endpoint : DELETE /api/clubs/{clubId}
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body: None
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Club delete success",
+    "errors": null,
+    "data": null
+}
+```
+
+### e. Get All Club
+Endpoint : GET /api/clubs
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+
+Request Body: None
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Club fetching success",
+    "errors": null,
+    "data": [
+        {
+            "id": 4,
+            "title": "Daytona Running Club",
+            "photoUrl": "Daytona Content",
+            "content": "https://img.freepik.com/free-photo/young-happy-sportswoman-running-road-morning-copy-space_637285-3758.jpg"
+        },
+        {
+            "id": 5,
+            "title": "Arizona Running Club",
+            "photoUrl": "Arizona Content",
+            "content": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+        }
+    ]
+}
+```
+
+### f. Get All Club by User
+Endpoint : GET /api/clubs/list
+
+Request Header :
+
+* Authorization : "Bearer " + Token (mandatory)
+
+Allowed User : 
+* ROLE_ADMIN
+* ROLE_USER
+
+Request Body: None
+
+Response Body:
+```json
+{
+    "status": true,
+    "messages": "Club fetching success",
+    "errors": null,
+    "data": [
+        {
+            "id": 7,
+            "title": "Boston Running Club",
+            "photoUrl": "Boston Content",
+            "content": "https://img.freepik.com/free-photo/young-attractive-fitness-girl-jogging_176420-824.jpg"
+        }
+    ]
+}
+```

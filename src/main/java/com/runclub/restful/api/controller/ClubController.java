@@ -114,7 +114,7 @@ public class ClubController {
 
         return WebResponse.<ClubResponse>builder()
                                         .status(true)
-                                        .messages("Club fetching success")
+                                        .messages("Club update success")
                                         .data(response)
                                         .build();
     }

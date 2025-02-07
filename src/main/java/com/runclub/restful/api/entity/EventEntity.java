@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "club")
+@Table(name = "event")
 public class EventEntity {
 
     @Id
