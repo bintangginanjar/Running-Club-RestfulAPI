@@ -42,7 +42,7 @@ public class AuthController {
                                         .build();
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     @DeleteMapping(
         path = "/api/auth/logout",        
         produces = MediaType.APPLICATION_JSON_VALUE
