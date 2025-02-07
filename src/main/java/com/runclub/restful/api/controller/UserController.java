@@ -71,7 +71,7 @@ public class UserController {
 
         return WebResponse.<UserResponse>builder()
                                             .status(true)
-                                            .messages("User update success")
+                                            .messages("User password update success")
                                             .data(response)
                                             .build();
     }
